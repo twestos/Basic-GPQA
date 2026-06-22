@@ -4,7 +4,7 @@ import random
 import hashlib
 import re
 from typing import Literal
-from eval.types import GDPQAQuestion
+from eval.types import GDPQAQuestion, ModelMessage
 
 
 ENCODER = tiktoken.get_encoding("o200k_base")
@@ -91,3 +91,4 @@ def extract_answer(text: str) -> Literal['A', 'B', 'C', 'D', None]:
         if match:
             return match.group(1)
     return None
+

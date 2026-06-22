@@ -27,6 +27,16 @@ class ModelUsageMetrics:
 
 
 @dataclass
+class ModelResponse:
+    content: str
+    ttft: float
+    output_speed: float
+    input_tokens_client: int
+    output_tokens_client: int
+    usage: ModelUsageMetrics | None
+
+
+@dataclass
 class EvaluationResult:
     question_id: str
     question: str
@@ -37,7 +47,13 @@ class EvaluationResult:
     output_tokens_client: int
     output_tokens_model: int
     valid_answer: bool
-    supplied_answer: str
+    supplied_answer: str | None
     correct_answer: str
     correctly_answered: bool
     cost: float
+
+
+@dataclass
+class ModelMessage:
+    role: Literal["user", "assistant", "system"]
+    content: str

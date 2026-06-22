@@ -1,7 +1,7 @@
 import asyncio
 import json
 import numpy as np
-from eval.gdpqa import GDPQA
+from eval.gpqa import GPQA
 
 
 REPEAT = 5
@@ -12,7 +12,7 @@ async def main():
         with open(f"results_{i+1}.jsonl", "a") as f:
             print(f"Running repeat {i+1} of {REPEAT}")
 
-            gdpqa = GDPQA(model="openai/gpt-5.4-nano")
+            gdpqa = GPQA(model="openai/gpt-5.4-nano")
             gdpqa.load_dataset("diamond")
             results = await gdpqa.run()
             all_results.extend(results)

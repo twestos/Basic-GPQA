@@ -10,7 +10,7 @@ from eval.utils import load_gdpqa_dataset, count_tokens, extract_answer
 load_dotenv()
 
 
-class GDPQA:
+class GPQA:
     def __init__(self, model: str):
         api_key = os.getenv("OPENROUTER_API_KEY")
         if not api_key:

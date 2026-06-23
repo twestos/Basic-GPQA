@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal Chronology Eval — Report</title>
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --panel:#ffffff;
+    --ink:#11151c;
+    --ink-2:#3b424d;
+    --muted:#6b7280;
+    --line:#e6e8ec;
+    --line-2:#eef0f3;
+    --accent:#4f46e5;
+    --accent-soft:#eef0fe;
+    --good:#2a9d8f;
+    --warn:#e9a23b;
+    --bad:#d1495b;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --shadow:0 1px 2px rgba(16,21,28,.04),0 4px 16px rgba(16,21,28,.05);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);line-height:1.55;
+    font-size:16px;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,.mono{font-family:var(--mono);font-size:.86em}
+
+  /* hero */
+  header.hero{
+    background:linear-gradient(165deg,#1b1f2a 0%,#272c3b 55%,#322a4d 100%);
+    color:#eef0f6;padding:54px 0 46px;border-bottom:1px solid #0d0f15;
+  }
+  .hero .wrap{position:relative}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:#a8aec0;margin:0 0 14px}
+  h1{font-size:40px;line-height:1.08;margin:0 0 14px;font-weight:680;letter-spacing:-.02em}
+  .hero p.lede{font-size:17.5px;color:#c8ccd8;max-width:760px;margin:0 0 26px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.12);color:#dfe3ec;border-radius:999px;
+    padding:6px 13px;font-size:13px}
+  .chip b{color:#fff;font-weight:620}
+  .chip .dot{width:7px;height:7px;border-radius:50%}
+
+  /* sections */
+  section{padding:42px 0}
+  section + section{border-top:1px solid var(--line)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+  h2{font-size:25px;margin:0 0 8px;font-weight:660;letter-spacing:-.01em}
+  h3{font-size:17px;margin:26px 0 10px;font-weight:640}
+  .sub{color:var(--muted);max-width:720px;margin:0 0 22px}
+  p{margin:0 0 14px;color:var(--ink-2)}
+  .lead-narrow{max-width:760px}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;margin:18px 0}
+  .panel h3:first-child{margin-top:2px}
+
+  /* pipeline steps */
+  .pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:15px 16px 16px;position:relative;box-shadow:var(--shadow)}
+  .step .n{font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;
+    background:var(--accent);width:24px;height:24px;border-radius:7px;
+    display:flex;align-items:center;justify-content:center;margin-bottom:9px}
+  .step h4{margin:0 0 4px;font-size:14.5px;font-weight:640}
+  .step p{margin:0;font-size:13.2px;color:var(--muted);line-height:1.45}
+
+  /* rubric scale */
+  .rubric{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow)}
+  .rrow{display:grid;grid-template-columns:64px 1fr;align-items:stretch;
+    border-top:1px solid var(--line-2)}
+  .rrow:first-child{border-top:none}
+  .rscore{display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+    font-weight:700;font-size:18px;color:#fff}
+  .rbody{padding:11px 16px}
+  .rbody b{font-weight:640;color:var(--ink)}
+  .rbody span{color:var(--muted);font-size:13.6px}
+  .passnote{display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+    font-size:13.5px;color:var(--ink-2);background:var(--accent-soft);
+    border:1px solid #dfe2fd;border-radius:9px;padding:8px 13px}
+
+  /* task-set chips */
+  .taxo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:740px){.taxo{grid-template-columns:1fr}.pipe{grid-template-columns:1fr}}
+  .taxo .panel{margin:0}
+  .barrow{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13.5px}
+  .barrow .lab{flex:0 0 150px;color:var(--ink-2);font-family:var(--mono);font-size:12.5px}
+  .barrow .track{flex:1;background:var(--line-2);height:9px;border-radius:6px;overflow:hidden}
+  .barrow .fill{display:block;height:100%;background:var(--accent);border-radius:6px}
+  .barrow .val{flex:0 0 30px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* tables */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);background:var(--panel)}
+  table{border-collapse:collapse;width:100%;font-size:13.6px;min-width:720px}
+  thead th{text-align:right;padding:13px 14px;font-weight:600;color:var(--ink-2);
+    border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;
+    user-select:none;font-size:12.5px;letter-spacing:.01em;background:#fbfbfc}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  thead th.txt{text-align:left}
+  thead th:hover{color:var(--accent)}
+  thead th .arrow{color:var(--accent);font-size:10px;margin-left:3px}
+  tbody td{padding:12px 14px;border-bottom:1px solid var(--line-2);text-align:right;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#fbfbfd}
+  .mdl{display:flex;align-items:center;gap:9px}
+  .mdl .sw{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+  .mdl .nm{font-weight:600;color:var(--ink)}
+  .mdl .pid{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .rkbadge{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+  td.best{color:var(--ink);font-weight:700}
+  td.best::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
+    background:var(--good);margin-left:6px;vertical-align:middle}
+  .legend-best{font-size:12px;color:var(--muted);margin:9px 2px 0;display:flex;
+    align-items:center;gap:7px}
+  .legend-best .d{width:6px;height:6px;border-radius:50%;background:var(--good);display:inline-block}
+
+  /* chart scaffolding */
+  .chart-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:20px 22px;margin:18px 0}
+  .chart-head{display:flex;justify-content:space-between;align-items:baseline;
+    gap:14px;flex-wrap:wrap;margin-bottom:6px}
+  .chart-head h3{margin:0;font-size:16px}
+  .chart-head .note{font-size:12.5px;color:var(--muted)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:740px){.grid2{grid-template-columns:1fr}}
+  .hbars{display:flex;flex-direction:column;gap:11px;margin-top:14px}
+  .hbar{display:grid;grid-template-columns:128px 1fr 58px;align-items:center;gap:11px}
+  .hbar .name{font-size:12.5px;color:var(--ink-2);font-family:var(--mono);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hbar .tk{background:var(--line-2);height:18px;border-radius:5px;overflow:hidden;position:relative}
+  .hbar .fl{display:block;height:100%;border-radius:5px;transition:width .2s}
+  .hbar .v{font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+  svg{display:block;max-width:100%;height:auto}
+  .axis{stroke:var(--line);stroke-width:1}
+  .gridline{stroke:var(--line-2);stroke-width:1}
+  .axlab{fill:var(--muted);font-size:11px;font-family:var(--sans)}
+  .ptlab{fill:var(--ink);font-size:11.5px;font-weight:600;font-family:var(--sans)}
+
+  /* heatmap */
+  .hm-toggle{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .hm-toggle button{border:none;background:var(--panel);padding:6px 13px;font-size:12.5px;
+    cursor:pointer;color:var(--ink-2);font-family:var(--sans)}
+  .hm-toggle button.on{background:var(--accent);color:#fff}
+  .heat{overflow-x:auto}
+  table.hm{border-collapse:separate;border-spacing:3px;min-width:560px;font-size:12.5px}
+  table.hm th{font-weight:600;color:var(--ink-2);padding:6px 6px;font-size:11.5px;
+    text-align:center;vertical-align:bottom}
+  table.hm th.rowh{text-align:left;font-family:var(--mono);font-weight:600;font-size:11.5px;
+    white-space:nowrap;padding-right:10px}
+  table.hm td{padding:0;text-align:center}
+  table.hm .cell{border-radius:6px;padding:11px 6px;font-variant-numeric:tabular-nums;
+    font-weight:600;min-width:64px}
+  .hm-scale{display:flex;align-items:center;gap:9px;margin-top:13px;font-size:12px;color:var(--muted)}
+  .hm-scale .grad{height:10px;width:170px;border-radius:5px}
+
+  /* takeaways */
+  .insights{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:740px){.insights{grid-template-columns:1fr}}
+  .ins{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:11px;padding:15px 17px;box-shadow:var(--shadow)}
+  .ins h4{margin:0 0 5px;font-size:14.5px;font-weight:650;display:flex;align-items:center;gap:8px}
+  .ins p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .ins .tag{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:5px;
+    background:var(--accent-soft);color:var(--accent);font-weight:600}
+
+  .lim{columns:2;column-gap:26px;margin-top:6px}
+  @media(max-width:740px){.lim{columns:1}}
+  .lim li{margin:0 0 11px;color:var(--ink-2);font-size:13.8px;break-inside:avoid}
+
+  footer{padding:34px 0 60px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .tt{position:fixed;pointer-events:none;background:#11151c;color:#fff;font-size:12px;
+    padding:7px 10px;border-radius:7px;opacity:0;transition:opacity .12s;z-index:50;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:240px;line-height:1.4}
+  .tt b{color:#fff}
+  @media print{
+    body{background:#fff}
+    header.hero{background:#1b1f2a !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .panel,.chart-card,.tablewrap,.step,.ins,.rubric{box-shadow:none}
+    section{padding:24px 0;page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Benchmark Report · eval/legal_chrono.py</p>
+    <h1>Legal Chronology Eval</h1>
+    <p class="lede">A one-shot benchmark that tests whether a model can answer a plain-English
+      legal-matter question using only a supplied set of reference files — then has a separate
+      grader model score the answer against a gold answer and rubric.</p>
+    <div class="chips" id="heroChips"></div>
+  </div>
+</header>
+
+<!-- WHAT IT MEASURES -->
+<section>
+  <div class="wrap">
+    <p class="kicker">What it measures</p>
+    <h2>Tracking a changing matter file</h2>
+    <div class="lead-narrow">
+      <p>The eval targets questions where the hard part is not retrieval but <b>keeping a moving
+        matter file straight</b>: chronology, contradictions between documents, which source
+        actually has authority, what issues are still live, upcoming deadlines, what each party
+        knew and when, and the current state of the matter.</p>
+      <p>Each task hands the candidate model a question plus a bundle of reference files and asks
+        for a plain-English answer grounded only in those files. A second <b>grader model</b> then
+        scores that answer for semantic correctness against a gold answer and a task-specific rubric
+        — rewarding correct chronology, contradiction handling, source authority and current-state
+        reasoning, and penalising unsupported claims, stale facts presented as current, missed
+        caveats, and wrong dates or parties.</p>
+    </div>
+    <div class="panel" style="margin-top:6px">
+      <h3 style="margin-top:2px">The task taxonomy</h3>
+      <p style="margin-bottom:18px;font-size:14px">Every run scores <b>100 tasks</b>, drawn from
+        the <span class="mono">twestoss/legal-matter-chrono-bench</span> dataset and labelled by
+        capability <em>category</em> and legal <em>domain</em>.</p>
+      <div class="taxo">
+        <div>
+          <h3 style="margin-top:0">By category <span style="color:var(--muted);font-weight:400;font-size:13px">— 7 capabilities</span></h3>
+          <div id="catTax"></div>
+        </div>
+        <div>
+          <h3 style="margin-top:0">By domain <span style="color:var(--muted);font-weight:400;font-size:13px">— 3 matter types</span></h3>
+          <div id="domTax"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW A RUN WORKS -->
+<section>
+  <div class="wrap">
+    <p class="kicker">How a run works</p>
+    <h2>The scoring pipeline</h2>
+    <p class="sub">Tasks run concurrently (default <span class="mono">--max-concurrency 4</span>),
+      each following the same nine steps from dataset load to graded result.</p>
+    <div class="pipe" id="pipe"></div>
+  </div>
+</section>
+
+<!-- RUBRIC -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Grading</p>
+    <h2>The 0–5 rubric</h2>
+    <p class="sub">The grader returns <span class="mono">Score: &lt;0–5&gt;</span> with a short
+      rationale. Scores are normalised to 0.0–1.0, and a task <b>passes</b> at <b>≥ 4</b>. By
+      default the grader sees the question, gold answer, rubric and candidate answer — but not the
+      full reference files.</p>
+    <div class="rubric" id="rubric"></div>
+    <span class="passnote">⌖&nbsp; <b>pass@4</b> = share of tasks scoring 4 or 5 — the headline
+      "good enough to be mostly correct" metric.</span>
+  </div>
+</section>
+
+<!-- RESULTS: LEADERBOARD -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Results · 6 models</p>
+    <h2>Leaderboard</h2>
+    <p class="sub">All six candidate models scored on the same 100 tasks by the same grader
+      (<span class="mono">openai/gpt-5.4</span>). Click any column to sort. Dotted cells mark the
+      best value in that column.</p>
+    <div class="tablewrap">
+      <table id="lb">
+        <thead><tr id="lbHead"></tr></thead>
+        <tbody id="lbBody"></tbody>
+      </table>
+    </div>
+    <div class="legend-best"><span class="d"></span> best-in-column &nbsp;·&nbsp; cost per task is OpenRouter-reported; TTFT &amp; output speed are p50 of the candidate answer call.</div>
+  </div>
+</section>
+
+<!-- QUALITY -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Quality</p>
+    <h2>How good are the answers?</h2>
+    <p class="sub">Two views of answer quality across all 100 tasks: the coarse pass@4 rate, and
+      the finer-grained average grader score on the raw 0–5 scale.</p>
+    <div class="grid2">
+      <div class="chart-card">
+        <div class="chart-head"><h3>pass@4</h3><span class="note">share scoring ≥ 4</span></div>
+        <div class="hbars" id="barsPass"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><h3>Average score</h3><span class="note">raw 0–5 scale</span></div>
+        <div class="hbars" id="barsAvg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COST VS QUALITY -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Price / performance</p>
+    <h2>Cost vs quality</h2>
+    <p class="sub">Normalised score against cost per task (log scale). The dashed line is the
+      <b>Pareto frontier</b> — models that aren't beaten on both price and quality at once.
+      Two models sit behind it: each is dominated by a cheaper, better option.</p>
+    <div class="chart-card">
+      <div id="scatter"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HEATMAPS -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Breakdowns</p>
+    <h2>Where the gaps are</h2>
+    <p class="sub">Per-model performance across the seven capability categories and three legal
+      domains. Toggle between normalised score and pass@4.</p>
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>By category</h3>
+        <div class="hm-toggle" data-target="hmCat">
+          <button class="on" data-metric="norm">Normalised score</button>
+          <button data-metric="pass">pass@4</button>
+        </div>
+      </div>
+      <div class="heat"><div id="hmCat"></div></div>
+      <div class="hm-scale" id="hmCatScale"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>By domain</h3>
+        <div class="hm-toggle" data-target="hmDom">
+          <button class="on" data-metric="norm">Normalised score</button>
+          <button data-metric="pass">pass@4</button>
+        </div>
+      </div>
+      <div class="heat"><div id="hmDom"></div></div>
+      <div class="hm-scale" id="hmDomScale"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LATENCY -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Serving</p>
+    <h2>Latency &amp; throughput</h2>
+    <p class="sub">Median (p50) time-to-first-token and output speed for the candidate answer call.
+      TTFT uses a log scale because the spread is enormous — one model is two orders of magnitude
+      slower to start than the fastest.</p>
+    <div class="grid2">
+      <div class="chart-card">
+        <div class="chart-head"><h3>Time to first token</h3><span class="note">p50, seconds · log scale</span></div>
+        <div id="latTtft"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><h3>Output speed</h3><span class="note">p50, tokens / sec</span></div>
+        <div class="hbars" id="latSpeed"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAKEAWAYS -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Read of the results</p>
+    <h2>Key takeaways</h2>
+    <p class="sub">Conclusions drawn directly from this run set — useful as benchmark signal, not
+      ground truth (the grader is itself an LLM).</p>
+    <div class="insights" id="insights"></div>
+  </div>
+</section>
+
+<!-- LIMITATIONS -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Caveats</p>
+    <h2>Limitations</h2>
+    <ul class="lim">
+      <li>The grader is itself an LLM, so scores are <b>benchmark signal, not ground truth</b>.</li>
+      <li>Invalid grader responses aren't retried or repaired beyond parsing several common score formats.</li>
+      <li>Generation settings (temperature, etc.) aren't exposed — the client sends only model, messages and <span class="mono">stream:true</span>.</li>
+      <li>The candidate model receives <b>truncated references</b> if the 120k-total / 30k-per-file character budgets are exceeded.</li>
+      <li>Local token counts are tokenizer estimates and may not match provider-reported usage exactly.</li>
+      <li>Hugging Face reference files are downloaded per task/path and rely on the local cache for reuse.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>Generated from <span class="mono">results/legal_chrono_summary.jsonl</span> · 6 runs ·
+      100 tasks each · grader <span class="mono">openai/gpt-5.4</span></div>
+    <div id="footDate"></div>
+  </div>
+</footer>
+
+<div class="tt" id="tt"></div>
+
+<script>
+/* ---------- DATA (verbatim from legal_chrono_summary.jsonl) ---------- */
+const DATA = [
+  {"model":"openai/gpt-5.4","avg_score":4.66,"norm_score":0.932,"pass_at_4":0.98,"task_count":100,"valid_score_count":100,"cost_per_task":0.04063205,"total_cost":4.063205,"grader_model":"openai/gpt-5.4","timestamp":"2026-06-23T22:50:40.388032","answer_ttft_p50":0.9736314584879437,"answer_ttft_p95":1.8303616829842198,"answer_speed_p50":99.9898347393253,"answer_speed_p95":115.39665148810131,"in_tokens_model":701161,"out_tokens_model":113775,"out_tokens_client":113375,"by_category":{"chronology":{"norm":0.925,"avg":4.625,"pass":1,"n":16},"contradiction":{"norm":0.95,"avg":4.75,"pass":1,"n":20},"current_position":{"norm":0.9230769230769231,"avg":4.615384615384615,"pass":1,"n":13},"deadlines":{"norm":0.92,"avg":4.6,"pass":0.9,"n":10},"live_issues":{"norm":0.92,"avg":4.6,"pass":1,"n":10},"party_knowledge":{"norm":0.9454545454545454,"avg":4.7272727272727275,"pass":1,"n":11},"source_authority":{"norm":0.93,"avg":4.65,"pass":0.95,"n":20}},"by_domain":{"commercial_lease":{"norm":0.955,"avg":4.775,"pass":1,"n":40},"employment_dispute":{"norm":0.8933333333333333,"avg":4.466666666666667,"pass":0.9333333333333333,"n":30},"family_property_settlement":{"norm":0.9400000000000001,"avg":4.7,"pass":1,"n":30}}},
+  {"model":"openai/gpt-5.4-nano","avg_score":4.26,"norm_score":0.852,"pass_at_4":0.89,"task_count":100,"valid_score_count":100,"cost_per_task":0.007776804,"total_cost":0.7776804,"grader_model":"openai/gpt-5.4","timestamp":"2026-06-23T22:57:12.139946","answer_ttft_p50":0.7750109999906272,"answer_ttft_p95":2.2808911023923426,"answer_speed_p50":146.54305495322868,"answer_speed_p95":175.1025111510881,"in_tokens_model":701161,"out_tokens_model":97442,"out_tokens_client":97042,"by_category":{"chronology":{"norm":0.85,"avg":4.25,"pass":0.9375,"n":16},"contradiction":{"norm":0.89,"avg":4.45,"pass":0.9,"n":20},"current_position":{"norm":0.8615384615384616,"avg":4.3076923076923075,"pass":0.9230769230769231,"n":13},"deadlines":{"norm":0.86,"avg":4.3,"pass":0.8,"n":10},"live_issues":{"norm":0.8400000000000001,"avg":4.2,"pass":0.9,"n":10},"party_knowledge":{"norm":0.8,"avg":4,"pass":0.8181818181818182,"n":11},"source_authority":{"norm":0.84,"avg":4.2,"pass":0.9,"n":20}},"by_domain":{"commercial_lease":{"norm":0.845,"avg":4.225,"pass":0.9,"n":40},"employment_dispute":{"norm":0.8266666666666667,"avg":4.133333333333334,"pass":0.8666666666666667,"n":30},"family_property_settlement":{"norm":0.8866666666666667,"avg":4.433333333333334,"pass":0.9,"n":30}}},
+  {"model":"openai/gpt-5.4-mini","avg_score":4.28,"norm_score":0.856,"pass_at_4":0.92,"task_count":100,"valid_score_count":100,"cost_per_task":0.01288049,"total_cost":1.288049,"grader_model":"openai/gpt-5.4","timestamp":"2026-06-23T23:00:52.416215","answer_ttft_p50":1.2070897505036555,"answer_ttft_p95":3.462018531592912,"answer_speed_p50":135.55190711484698,"answer_speed_p95":169.57798842194669,"in_tokens_model":696198,"out_tokens_model":63799,"out_tokens_client":64040,"by_category":{"chronology":{"norm":0.8500000000000001,"avg":4.25,"pass":1,"n":16},"contradiction":{"norm":0.9,"avg":4.5,"pass":0.95,"n":20},"current_position":{"norm":0.8307692307692308,"avg":4.153846153846154,"pass":0.9230769230769231,"n":13},"deadlines":{"norm":0.8,"avg":4,"pass":0.8,"n":10},"live_issues":{"norm":0.88,"avg":4.4,"pass":0.9,"n":10},"party_knowledge":{"norm":0.8545454545454546,"avg":4.2727272727272725,"pass":1,"n":11},"source_authority":{"norm":0.85,"avg":4.25,"pass":0.85,"n":20}},"by_domain":{"commercial_lease":{"norm":0.88,"avg":4.4,"pass":0.975,"n":40},"employment_dispute":{"norm":0.8333333333333334,"avg":4.166666666666667,"pass":0.9,"n":30},"family_property_settlement":{"norm":0.8466666666666667,"avg":4.233333333333333,"pass":0.8666666666666667,"n":30}}},
+  {"model":"qwen/qwen3.7-plus","avg_score":4.12,"norm_score":0.824,"pass_at_4":0.83,"task_count":100,"valid_score_count":100,"cost_per_task":0.0109412856,"total_cost":1.09412856,"grader_model":"openai/gpt-5.4","timestamp":"2026-06-23T23:07:57.179362","answer_ttft_p50":43.534792083490174,"answer_ttft_p95":73.93808931424573,"answer_speed_p50":51.72754491227717,"answer_speed_p95":59.79994138418548,"in_tokens_model":756476,"out_tokens_model":281583,"out_tokens_client":64891,"by_category":{"chronology":{"norm":0.775,"avg":3.875,"pass":0.6875,"n":16},"contradiction":{"norm":0.8300000000000001,"avg":4.15,"pass":0.85,"n":20},"current_position":{"norm":0.7846153846153846,"avg":3.923076923076923,"pass":0.8461538461538461,"n":13},"deadlines":{"norm":0.78,"avg":3.9,"pass":0.7,"n":10},"live_issues":{"norm":0.8200000000000001,"avg":4.1,"pass":0.8,"n":10},"party_knowledge":{"norm":0.8545454545454546,"avg":4.2727272727272725,"pass":0.9090909090909091,"n":11},"source_authority":{"norm":0.89,"avg":4.45,"pass":0.95,"n":20}},"by_domain":{"commercial_lease":{"norm":0.81,"avg":4.05,"pass":0.875,"n":40},"employment_dispute":{"norm":0.8266666666666667,"avg":4.133333333333334,"pass":0.8,"n":30},"family_property_settlement":{"norm":0.84,"avg":4.2,"pass":0.8,"n":30}}},
+  {"model":"x-ai/grok-4.20-multi-agent","avg_score":4.51,"norm_score":0.902,"pass_at_4":0.98,"task_count":100,"valid_score_count":100,"cost_per_task":0.064955718,"total_cost":6.4955718,"grader_model":"openai/gpt-5.4","timestamp":"2026-06-23T23:09:19.934217","answer_ttft_p50":7.817324874486076,"answer_ttft_p95":14.632332506607053,"answer_speed_p50":190.45547861382937,"answer_speed_p95":228.51026927867778,"in_tokens_model":5826214,"out_tokens_model":547688,"out_tokens_client":73211,"by_category":{"chronology":{"norm":0.8875000000000001,"avg":4.4375,"pass":1,"n":16},"contradiction":{"norm":0.93,"avg":4.65,"pass":1,"n":20},"current_position":{"norm":0.9076923076923077,"avg":4.538461538461538,"pass":1,"n":13},"deadlines":{"norm":0.84,"avg":4.2,"pass":0.8,"n":10},"live_issues":{"norm":0.92,"avg":4.6,"pass":1,"n":10},"party_knowledge":{"norm":0.890909090909091,"avg":4.454545454545454,"pass":1,"n":11},"source_authority":{"norm":0.91,"avg":4.55,"pass":1,"n":20}},"by_domain":{"commercial_lease":{"norm":0.905,"avg":4.525,"pass":0.975,"n":40},"employment_dispute":{"norm":0.8866666666666667,"avg":4.433333333333334,"pass":0.9666666666666667,"n":30},"family_property_settlement":{"norm":0.9133333333333333,"avg":4.566666666666666,"pass":1,"n":30}}},
+  {"model":"arcee-ai/trinity-mini","avg_score":3.4,"norm_score":0.68,"pass_at_4":0.56,"task_count":100,"valid_score_count":100,"cost_per_task":0.0046569192,"total_cost":0.46569192,"grader_model":"openai/gpt-5.4","timestamp":"2026-06-23T23:10:53.467554","answer_ttft_p50":4.527888354496099,"answer_ttft_p95":8.622461803851182,"answer_speed_p50":161.8877261091261,"answer_speed_p95":213.2286697468085,"in_tokens_model":684106,"out_tokens_model":77431,"out_tokens_client":37993,"by_category":{"chronology":{"norm":0.6625,"avg":3.3125,"pass":0.4375,"n":16},"contradiction":{"norm":0.65,"avg":3.25,"pass":0.6,"n":20},"current_position":{"norm":0.6923076923076923,"avg":3.4615384615384617,"pass":0.46153846153846156,"n":13},"deadlines":{"norm":0.62,"avg":3.1,"pass":0.4,"n":10},"live_issues":{"norm":0.7,"avg":3.5,"pass":0.6,"n":10},"party_knowledge":{"norm":0.6727272727272727,"avg":3.3636363636363638,"pass":0.5454545454545454,"n":11},"source_authority":{"norm":0.74,"avg":3.7,"pass":0.75,"n":20}},"by_domain":{"commercial_lease":{"norm":0.665,"avg":3.325,"pass":0.525,"n":40},"employment_dispute":{"norm":0.68,"avg":3.4,"pass":0.5666666666666667,"n":30},"family_property_settlement":{"norm":0.7000000000000001,"avg":3.5,"pass":0.6,"n":30}}}
+];
+
+/* ---------- config ---------- */
+const COLORS = {
+  "openai/gpt-5.4":"#4f46e5",
+  "x-ai/grok-4.20-multi-agent":"#9333ea",
+  "openai/gpt-5.4-mini":"#0891b2",
+  "openai/gpt-5.4-nano":"#16a34a",
+  "qwen/qwen3.7-plus":"#d97706",
+  "arcee-ai/trinity-mini":"#dc2626"
+};
+const SHORT = m => m.split("/")[1];
+const CATS = ["chronology","contradiction","current_position","deadlines","live_issues","party_knowledge","source_authority"];
+const DOMS = ["commercial_lease","employment_dispute","family_property_settlement"];
+const LABEL = s => s.replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+
+/* composite rank: pass@4 desc, tiebreak avg_score desc */
+const ranked = [...DATA].sort((a,b)=> b.pass_at_4-a.pass_at_4 || b.avg_score-a.avg_score);
+ranked.forEach((d,i)=> d._rank = i+1);
+
+/* ---------- tooltip ---------- */
+const tt = document.getElementById("tt");
+function showTT(html,x,y){ tt.innerHTML=html; tt.style.opacity=1;
+  tt.style.left=Math.min(x+14,window.innerWidth-tt.offsetWidth-12)+"px";
+  tt.style.top=(y+16)+"px"; }
+function hideTT(){ tt.style.opacity=0; }
+
+/* ---------- hero chips ---------- */
+const runDate = new Date(DATA[0].timestamp);
+document.getElementById("heroChips").innerHTML = [
+  `<span class="chip"><b>6</b> candidate models</span>`,
+  `<span class="chip"><b>100</b> tasks / run</span>`,
+  `<span class="chip"><b>7</b> categories</span>`,
+  `<span class="chip"><b>3</b> legal domains</span>`,
+  `<span class="chip">grader <b>gpt-5.4</b></span>`,
+  `<span class="chip">${runDate.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"})}</span>`
+].join("");
+document.getElementById("footDate").textContent =
+  "Run "+runDate.toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+
+/* ---------- task taxonomy bars ---------- */
+function taxBars(el,keys){
+  const counts = keys.map(k=>({k,n:DATA[0].by_category[k]?DATA[0].by_category[k].n:DATA[0].by_domain[k].n}));
+  const max = Math.max(...counts.map(c=>c.n));
+  el.innerHTML = counts.map(c=>`
+    <div class="barrow">
+      <span class="lab">${LABEL(c.k)}</span>
+      <span class="track"><span class="fill" style="width:${c.n/max*100}%"></span></span>
+      <span class="val">${c.n}</span>
+    </div>`).join("");
+}
+taxBars(document.getElementById("catTax"),CATS);
+taxBars(document.getElementById("domTax"),DOMS);
+
+/* ---------- pipeline ---------- */
+const STEPS = [
+  ["Load tasks","Read task rows from the Hugging Face dataset split."],
+  ["Filter","Optionally filter by domain, category, matter id, offset or limit."],
+  ["Fetch references","Download each task's listed reference files from the repo."],
+  ["Build answer prompt","Assemble task metadata, the question and reference blocks."],
+  ["Candidate answers","Model answers in plain English using only those files."],
+  ["Build grader prompt","Question, gold answer, rubric and the candidate answer."],
+  ["Grade","Grader returns Score: 0–5 and a short rationale."],
+  ["Parse &amp; normalise","Parse the score, normalise to 0–1, pass if ≥ 4."],
+  ["Write results","Per-task JSONL plus aggregate summary metrics."]
+];
+document.getElementById("pipe").innerHTML = STEPS.map((s,i)=>`
+  <div class="step"><div class="n">${i+1}</div><h4>${s[0]}</h4><p>${s[1]}</p></div>`).join("");
+
+/* ---------- rubric ---------- */
+const RUBRIC = [
+  [5,"#1f8f6f","Fully correct","Captures all material points, chronology, caveats and current-state implications."],
+  [4,"#52a36b","Mostly correct","Minor omissions or imprecision; no material contradiction."],
+  [3,"#caa53b","Partially correct","Gets the broad issue but misses important evidence, timing or caveats."],
+  [2,"#d98344","Weak","Some relevant facts, but substantial omissions or confused chronology."],
+  [1,"#cf5f49","Minimally relevant","Mostly incorrect or unsupported."],
+  [0,"#bf4248","Wrong","Irrelevant, empty or fundamentally wrong."]
+];
+document.getElementById("rubric").innerHTML = RUBRIC.map(r=>`
+  <div class="rrow">
+    <div class="rscore" style="background:${r[1]}">${r[0]}</div>
+    <div class="rbody"><b>${r[2]}.</b> <span>${r[3]}</span></div>
+  </div>`).join("");
+
+/* ---------- leaderboard ---------- */
+const COLS = [
+  {k:"_rank",t:"#",txt:true,fmt:d=>`<span class="rkbadge">${d._rank}</span>`,sort:d=>d._rank,dir:1},
+  {k:"model",t:"Model",txt:true,fmt:d=>`<div class="mdl"><span class="sw" style="background:${COLORS[d.model]}"></span><span><span class="nm">${SHORT(d.model)}</span><br><span class="pid">${d.model}</span></span></div>`,sort:d=>d._rank,dir:1},
+  {k:"pass_at_4",t:"pass@4",fmt:d=>(d.pass_at_4*100).toFixed(0)+"%",sort:d=>d.pass_at_4,best:"max"},
+  {k:"avg_score",t:"Avg score",fmt:d=>d.avg_score.toFixed(2),sort:d=>d.avg_score,best:"max"},
+  {k:"norm_score",t:"Norm",fmt:d=>d.norm_score.toFixed(3),sort:d=>d.norm_score,best:"max"},
+  {k:"cost_per_task",t:"$ / task",fmt:d=>"$"+d.cost_per_task.toFixed(4),sort:d=>d.cost_per_task,best:"min"},
+  {k:"total_cost",t:"Total $",fmt:d=>"$"+d.total_cost.toFixed(2),sort:d=>d.total_cost,best:"min"},
+  {k:"answer_ttft_p50",t:"TTFT p50",fmt:d=>d.answer_ttft_p50.toFixed(2)+"s",sort:d=>d.answer_ttft_p50,best:"min"},
+  {k:"answer_speed_p50",t:"tok/s p50",fmt:d=>d.answer_speed_p50.toFixed(0),sort:d=>d.answer_speed_p50,best:"max"}
+];
+const bestVal = {};
+COLS.forEach(c=>{ if(c.best){ const vals=DATA.map(c.sort); bestVal[c.k]=c.best==="max"?Math.max(...vals):Math.min(...vals);} });
+let sortState = {k:"_rank",asc:true};
+document.getElementById("lbHead").innerHTML = COLS.map(c=>
+  `<th class="${c.txt?'txt':''}" data-k="${c.k}">${c.t}<span class="arrow" data-arrow="${c.k}"></span></th>`).join("");
+function renderLB(){
+  const col = COLS.find(c=>c.k===sortState.k);
+  const rows=[...DATA].sort((a,b)=>{
+    const va=col.sort(a),vb=col.sort(b);
+    return sortState.asc?(va-vb):(vb-va);
+  });
+  document.getElementById("lbBody").innerHTML = rows.map(d=>`<tr>${
+    COLS.map(c=>{
+      const isBest = c.best && Math.abs(c.sort(d)-bestVal[c.k])<1e-9;
+      return `<td class="${c.txt?'txt':''} ${isBest?'best':''}">${c.fmt(d)}</td>`;
+    }).join("")
+  }</tr>`).join("");
+  document.querySelectorAll("[data-arrow]").forEach(a=>a.textContent="");
+  const ar=document.querySelector(`[data-arrow="${sortState.k}"]`);
+  if(ar) ar.textContent = sortState.asc?"▲":"▼";
+}
+document.querySelectorAll("#lbHead th").forEach(th=>{
+  th.addEventListener("click",()=>{
+    const k=th.dataset.k;
+    if(sortState.k===k) sortState.asc=!sortState.asc;
+    else { sortState.k=k; sortState.asc = (k==="_rank"||k==="model"); }
+    renderLB();
+  });
+});
+renderLB();
+
+/* ---------- horizontal bar helper ---------- */
+function hbars(el,key,fmt,domainMax){
+  const rows=[...DATA].sort((a,b)=>b[key]-a[key]);
+  const max=domainMax||Math.max(...rows.map(r=>r[key]));
+  el.innerHTML=rows.map(d=>`
+    <div class="hbar" data-tip="${SHORT(d.model)} — ${fmt(d[key])}">
+      <span class="name" style="color:${COLORS[d.model]}">${SHORT(d.model)}</span>
+      <span class="tk"><span class="fl" style="width:${d[key]/max*100}%;background:${COLORS[d.model]}"></span></span>
+      <span class="v">${fmt(d[key])}</span>
+    </div>`).join("");
+}
+hbars(document.getElementById("barsPass"),"pass_at_4",v=>(v*100).toFixed(0)+"%",1);
+hbars(document.getElementById("barsAvg"),"avg_score",v=>v.toFixed(2),5);
+hbars(document.getElementById("latSpeed"),"answer_speed_p50",v=>v.toFixed(0));
+
+/* ---------- cost vs quality scatter ---------- */
+function scatter(){
+  const W=940,H=460,m={l:62,r:24,t:22,b:54};
+  const iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const xmin=Math.log10(0.004), xmax=Math.log10(0.075);
+  const ymin=0.64, ymax=0.96;
+  const X=c=>m.l+(Math.log10(c)-xmin)/(xmax-xmin)*iw;
+  const Y=v=>m.t+(1-(v-ymin)/(ymax-ymin))*ih;
+  const xticks=[0.004,0.006,0.01,0.02,0.04,0.06];
+  const yticks=[0.65,0.70,0.75,0.80,0.85,0.90,0.95];
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost vs quality scatter">`;
+  // grid + y ticks
+  yticks.forEach(t=>{ const y=Y(t);
+    s+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${W-m.r}" y2="${y}"/>`;
+    s+=`<text class="axlab" x="${m.l-9}" y="${y+4}" text-anchor="end">${t.toFixed(2)}</text>`;});
+  xticks.forEach(t=>{ const x=X(t);
+    s+=`<line class="gridline" x1="${x}" y1="${m.t}" x2="${x}" y2="${H-m.b}"/>`;
+    s+=`<text class="axlab" x="${x}" y="${H-m.b+18}" text-anchor="middle">$${t}</text>`;});
+  // axis titles
+  s+=`<text class="axlab" x="${m.l+iw/2}" y="${H-8}" text-anchor="middle" style="font-size:12px">Cost per task (USD, log scale) →</text>`;
+  s+=`<text class="axlab" transform="translate(15,${m.t+ih/2}) rotate(-90)" text-anchor="middle" style="font-size:12px">Normalised score →</text>`;
+  // pareto frontier: trinity -> nano -> mini -> gpt-5.4 (sorted by cost)
+  const frontKeys=["arcee-ai/trinity-mini","openai/gpt-5.4-nano","openai/gpt-5.4-mini","openai/gpt-5.4"];
+  const fp=frontKeys.map(k=>DATA.find(d=>d.model===k));
+  let path=fp.map((d,i)=>`${i?'L':'M'}${X(d.cost_per_task).toFixed(1)},${Y(d.norm_score).toFixed(1)}`).join(" ");
+  s+=`<path d="${path}" fill="none" stroke="#9aa1ad" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+  s+=`<text class="axlab" x="${X(fp[0].cost_per_task)+8}" y="${Y(fp[0].norm_score)-10}" style="font-size:11px;fill:#9aa1ad;font-style:italic">Pareto frontier</text>`;
+  // points
+  const dominated=new Set(["qwen/qwen3.7-plus","x-ai/grok-4.20-multi-agent"]);
+  DATA.forEach(d=>{
+    const x=X(d.cost_per_task),y=Y(d.norm_score),c=COLORS[d.model];
+    const dom=dominated.has(d.model);
+    s+=`<g class="pt" data-model="${d.model}" style="cursor:pointer">`;
+    s+=`<circle cx="${x}" cy="${y}" r="9" fill="${c}" fill-opacity="${dom?0.32:0.92}" stroke="${c}" stroke-width="${dom?1.6:1.6}" ${dom?'stroke-dasharray="3 2"':''}/>`;
+    // label placement
+    const right = d.cost_per_task<0.02;
+    s+=`<text class="ptlab" x="${right?x+14:x-14}" y="${y+4}" text-anchor="${right?'start':'end'}">${SHORT(d.model)}</text>`;
+    s+=`</g>`;
+  });
+  // dominated note
+  s+=`<text class="axlab" x="${W-m.r}" y="${m.t+10}" text-anchor="end" style="font-size:11px;font-style:italic">hollow = dominated (a cheaper, better model exists)</text>`;
+  s+=`</svg>`;
+  const host=document.getElementById("scatter"); host.innerHTML=s;
+  host.querySelectorAll(".pt").forEach(g=>{
+    const d=DATA.find(x=>x.model===g.dataset.model);
+    g.addEventListener("mousemove",e=>showTT(
+      `<b>${SHORT(d.model)}</b><br>norm ${d.norm_score.toFixed(3)} · pass@4 ${(d.pass_at_4*100).toFixed(0)}%<br>$${d.cost_per_task.toFixed(4)}/task · $${d.total_cost.toFixed(2)} total`,
+      e.clientX,e.clientY));
+    g.addEventListener("mouseleave",hideTT);
+  });
+}
+scatter();
+
+/* ---------- heatmaps ---------- */
+function lum(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return (0.299*r+0.587*g+0.114*b)/255;}
+function lerp(a,b,t){return Math.round(a+(b-a)*t);}
+function heatColor(v,lo,hi){
+  const t=Math.max(0,Math.min(1,(v-lo)/(hi-lo)));
+  const stops=[[0,[201,73,72]],[0.5,[233,196,106]],[1,[42,157,143]]];
+  let i=t<=0.5?0:1, seg=t<=0.5?t/0.5:(t-0.5)/0.5;
+  const c0=stops[i][1],c1=stops[i+1][1];
+  return `rgb(${lerp(c0[0],c1[0],seg)},${lerp(c0[1],c1[1],seg)},${lerp(c0[2],c1[2],seg)})`;
+}
+function hexAt(v,lo,hi){ // for luminance check we approximate with rgb parse
+  const rgb=heatColor(v,lo,hi).match(/\d+/g).map(Number);
+  return (0.299*rgb[0]+0.587*rgb[1]+0.114*rgb[2])/255;
+}
+const HM = {
+  cat:{el:"hmCat",scale:"hmCatScale",keys:CATS,acc:d=>d.by_category,metric:"norm"},
+  dom:{el:"hmDom",scale:"hmDomScale",keys:DOMS,acc:d=>d.by_domain,metric:"norm"}
+};
+function renderHeat(which){
+  const cfg=HM[which];
+  const metric=cfg.metric;
+  const rows=[...DATA].sort((a,b)=>b.norm_score-a.norm_score);
+  // domain of color scale
+  let vals=[];
+  rows.forEach(d=>cfg.keys.forEach(k=>vals.push(cfg.acc(d)[k][metric])));
+  const lo=Math.min(...vals), hi=Math.max(...vals);
+  let h=`<table class="hm"><thead><tr><th class="rowh"></th>`;
+  cfg.keys.forEach(k=>h+=`<th>${LABEL(k)}</th>`);
+  h+=`</tr></thead><tbody>`;
+  rows.forEach(d=>{
+    h+=`<tr><th class="rowh" style="color:${COLORS[d.model]}">${SHORT(d.model)}</th>`;
+    cfg.keys.forEach(k=>{
+      const v=cfg.acc(d)[k][metric];
+      const bg=heatColor(v,lo,hi);
+      const txt=hexAt(v,lo,hi)>0.6?"#1b2330":"#fff";
+      const disp=metric==="pass"?(v*100).toFixed(0)+"%":v.toFixed(2);
+      const cell=cfg.acc(d)[k];
+      h+=`<td><div class="cell" style="background:${bg};color:${txt}" data-tip="${SHORT(d.model)} · ${LABEL(k)}\nnorm ${cell.norm.toFixed(2)} · avg ${cell.avg.toFixed(2)} · pass@4 ${(cell.pass*100).toFixed(0)}% · n=${cell.n}">${disp}</div></td>`;
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table>`;
+  document.getElementById(cfg.el).innerHTML=h;
+  // scale legend
+  const g=`linear-gradient(90deg,${heatColor(lo,lo,hi)},${heatColor((lo+hi)/2,lo,hi)},${heatColor(hi,lo,hi)})`;
+  const fmtv=metric==="pass"?v=>(v*100).toFixed(0)+"%":v=>v.toFixed(2);
+  document.getElementById(cfg.scale).innerHTML=
+    `<span>low ${fmtv(lo)}</span><span class="grad" style="background:${g}"></span><span>high ${fmtv(hi)}</span>
+     <span style="margin-left:8px">— ${metric==="pass"?"pass@4":"normalised score"}</span>`;
+  // tooltips
+  document.querySelectorAll(`#${cfg.el} .cell`).forEach(c=>{
+    c.addEventListener("mousemove",e=>showTT(c.dataset.tip.replace(/\n/g,"<br>"),e.clientX,e.clientY));
+    c.addEventListener("mouseleave",hideTT);
+  });
+}
+renderHeat("cat"); renderHeat("dom");
+document.querySelectorAll(".hm-toggle").forEach(tg=>{
+  tg.querySelectorAll("button").forEach(b=>{
+    b.addEventListener("click",()=>{
+      tg.querySelectorAll("button").forEach(x=>x.classList.remove("on"));
+      b.classList.add("on");
+      const which = tg.dataset.target==="hmCat"?"cat":"dom";
+      HM[which].metric=b.dataset.metric;
+      renderHeat(which);
+    });
+  });
+});
+
+/* ---------- latency: TTFT log-scale bars ---------- */
+function ttftChart(){
+  const rows=[...DATA].sort((a,b)=>a.answer_ttft_p50-b.answer_ttft_p50);
+  const W=480,rowH=34,m={l:120,r:54,t:8,b:26};
+  const H=m.t+m.b+rows.length*rowH;
+  const lo=Math.log10(0.5),hi=Math.log10(60);
+  const iw=W-m.l-m.r;
+  const X=v=>m.l+(Math.log10(v)-lo)/(hi-lo)*iw;
+  const ticks=[0.5,1,2,5,10,20,50];
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="TTFT log scale">`;
+  ticks.forEach(t=>{const x=X(t);
+    s+=`<line class="gridline" x1="${x}" y1="${m.t}" x2="${x}" y2="${H-m.b}"/>`;
+    s+=`<text class="axlab" x="${x}" y="${H-m.b+16}" text-anchor="middle">${t}s</text>`;});
+  rows.forEach((d,i)=>{
+    const y=m.t+i*rowH+6, bh=18, c=COLORS[d.model];
+    const x=X(d.answer_ttft_p50);
+    s+=`<text class="axlab" x="${m.l-10}" y="${y+bh/2+4}" text-anchor="end" style="fill:${c};font-family:var(--mono);font-size:11px">${SHORT(d.model)}</text>`;
+    s+=`<rect x="${m.l}" y="${y}" width="${Math.max(2,x-m.l)}" height="${bh}" rx="4" fill="${c}" fill-opacity="0.92"/>`;
+    s+=`<text class="ptlab" x="${x+7}" y="${y+bh/2+4}" style="font-size:11.5px">${d.answer_ttft_p50.toFixed(d.answer_ttft_p50<10?2:1)}s</text>`;
+  });
+  s+=`</svg>`;
+  document.getElementById("latTtft").innerHTML=s;
+}
+ttftChart();
+
+/* ---------- insights ---------- */
+const INS=[
+  ["🥇","Top performer","gpt-5.4","<b>openai/gpt-5.4</b> leads on every headline metric — 98% pass@4, 4.66 average, 0.932 normalised — and is strongest on contradiction (0.95) and party-knowledge (0.945) tasks."],
+  ["⚖️","Pareto win over Grok","gpt-5.4","gpt-5.4 <b>dominates grok-4.20</b>: higher quality (0.932 vs 0.902) at roughly <b>37% lower cost</b> per task ($0.041 vs $0.065). Grok ties on pass@4 but never wins on price."],
+  ["💸","Grok's hidden cost","grok-4.20","The multi-agent design balloons usage to <b>5.8M model-side input tokens</b> and 548k output (vs 73k surfaced to the client), making it the most expensive run at <b>$6.50 total</b>."],
+  ["🎯","Best value","gpt-5.4-nano","<b>nano</b> hits 0.852 normalised at <b>$0.0078/task</b> — about 5× cheaper than gpt-5.4 for ~91% of its quality — plus the fastest TTFT (0.78s). mini edges it on pass@4 (92% vs 89%) for ~1.7× the price."],
+  ["🐌","Latency outlier","qwen3.7-plus","qwen is dominated by nano on price <em>and</em> quality, and has a severe serving problem: a <b>43.5s median time-to-first-token</b> — ~56× slower to start than nano."],
+  ["📉","Quality floor","trinity-mini","Cheapest at $0.0047/task but only <b>56% pass@4</b> (0.68 normalised). Weakest on deadlines (40% pass) and contradiction (0.65) — a clear capability gap, not just noise."],
+  ["📅","Hardest category","5 of 6","<b>Deadlines</b> is the weakest category for most models — the lowest pass@4 for <b>five of the six</b> (only qwen dips lower, on chronology). Contradiction and source-authority are generally the strongest."],
+  ["🏢","Hardest domain","All models","<b>Employment-dispute</b> is the toughest matter type for four of six models, including gpt-5.4 (0.893 vs 0.955 on commercial-lease)."]
+];
+document.getElementById("insights").innerHTML=INS.map(i=>`
+  <div class="ins"><h4>${i[0]} ${i[1]} <span class="tag">${i[2]}</span></h4><p>${i[3]}</p></div>`).join("");
+</script>
+</body>
+</html>

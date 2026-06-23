@@ -1,0 +1,112 @@
+{
+  "answer_input_tokens_client": 700161,
+  "answer_input_tokens_model": 696198,
+  "answer_output_speed": {
+    "p50": 135.55190711484698,
+    "p75": 148.63238307696423,
+    "p90": 159.92892774358342,
+    "p95": 169.57798842194669,
+    "p99": 185.4848306147039
+  },
+  "answer_output_tokens_client": 64040,
+  "answer_output_tokens_model": 63799,
+  "answer_ttft": {
+    "p50": 1.2070897505036555,
+    "p75": 2.1873898335179547,
+    "p90": 3.061835637802142,
+    "p95": 3.462018531592912,
+    "p99": 3.8840301276897677
+  },
+  "average_normalized_score": 0.856,
+  "average_score": 4.28,
+  "by_category": {
+    "chronology": {
+      "average_normalized_score": 0.8500000000000001,
+      "average_score": 4.25,
+      "pass_at_4": 1,
+      "task_count": 16
+    },
+    "contradiction": {
+      "average_normalized_score": 0.9,
+      "average_score": 4.5,
+      "pass_at_4": 0.95,
+      "task_count": 20
+    },
+    "current_position": {
+      "average_normalized_score": 0.8307692307692308,
+      "average_score": 4.153846153846154,
+      "pass_at_4": 0.9230769230769231,
+      "task_count": 13
+    },
+    "deadlines": {
+      "average_normalized_score": 0.8,
+      "average_score": 4,
+      "pass_at_4": 0.8,
+      "task_count": 10
+    },
+    "live_issues": {
+      "average_normalized_score": 0.88,
+      "average_score": 4.4,
+      "pass_at_4": 0.9,
+      "task_count": 10
+    },
+    "party_knowledge": {
+      "average_normalized_score": 0.8545454545454546,
+      "average_score": 4.2727272727272725,
+      "pass_at_4": 1,
+      "task_count": 11
+    },
+    "source_authority": {
+      "average_normalized_score": 0.85,
+      "average_score": 4.25,
+      "pass_at_4": 0.85,
+      "task_count": 20
+    }
+  },
+  "by_domain": {
+    "commercial_lease": {
+      "average_normalized_score": 0.88,
+      "average_score": 4.4,
+      "pass_at_4": 0.975,
+      "task_count": 40
+    },
+    "employment_dispute": {
+      "average_normalized_score": 0.8333333333333334,
+      "average_score": 4.166666666666667,
+      "pass_at_4": 0.9,
+      "task_count": 30
+    },
+    "family_property_settlement": {
+      "average_normalized_score": 0.8466666666666667,
+      "average_score": 4.233333333333333,
+      "pass_at_4": 0.8666666666666667,
+      "task_count": 30
+    }
+  },
+  "cost_per_task": 0.01288049,
+  "grader_input_tokens_client": 119116,
+  "grader_input_tokens_model": 120116,
+  "grader_model": "openai/gpt-5.4",
+  "grader_output_speed": {
+    "p50": 92.61653629440048,
+    "p75": 102.44698635934378,
+    "p90": 116.49980541118447,
+    "p95": 129.13338795905238,
+    "p99": 148.92827968485486
+  },
+  "grader_output_tokens_client": 11501,
+  "grader_output_tokens_model": 11901,
+  "grader_ttft": {
+    "p50": 0.9708555624820292,
+    "p75": 1.2076505730074132,
+    "p90": 1.5047673830093118,
+    "p95": 1.8397460860345745,
+    "p99": 3.691158808113835
+  },
+  "model": "openai/gpt-5.4-mini",
+  "pass_at_4": 0.92,
+  "task_count": 100,
+  "timestamp": "2026-06-23T23:00:52.416215",
+  "total_cost": 1.288049,
+  "valid_score_count": 100
+}

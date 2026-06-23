@@ -33,11 +33,13 @@ The implementation favours readability and explicitness over abstraction. There 
 ```text
 .
 ├── main.py                  # Runs GPQA Diamond repeats and writes result summaries
+├── datagen/                 # Synthetic dataset generation utilities
 ├── eval/
 │   ├── client.py            # OpenRouter streaming client built with httpx
 │   ├── gpqa.py              # GPQA evaluation runner
 │   ├── types.py             # Dataclasses for questions, responses, and results
 │   └── utils.py             # Dataset loading, prompt formatting, answer extraction
+├── datasets/                # Ignored local generated dataset outputs
 ├── results/                 # Per-model repeat-level result files
 ├── results_summary.jsonl    # Aggregate pass@1 summaries
 └── pyproject.toml
@@ -63,6 +65,7 @@ Then set:
 
 ```bash
 OPENROUTER_API_KEY=sk-or-v1-...
+HF_TOKEN=hf_... # only needed for Hugging Face uploads
 ```
 
 ## Running
@@ -86,6 +89,103 @@ results_summary.jsonl
 ```
 
 To test another model, change the `model` argument passed to `run_gpqa` in `main.py`.
+
+## Legal Matter Dataset Generation
+
+The `datagen.legal_matter` package builds synthetic legal chronology datasets for testing whether models can understand a changing matter file over time. V1 supports jurisdiction-light Australian commercial lease, employment, and family property settlement disputes, and writes a hybrid Hugging Face-ready folder: JSONL indexes plus artifact files.
+
+Build a local dataset with the OpenRouter-backed generator:
+
+```bash
+uv run python -m datagen.legal_matter build --count 1 --output datasets/legal_matter_chronology_v1
+```
+
+The build command validates the generated dataset and runs up to two surgical
+repair passes by default. Repairs are limited to metadata/index consistency and
+minimal supplemental artifact notes for uncovered canonical events. Disable this
+with `--no-repair`, or tune it with `--repair-attempts`.
+
+For larger local batches, tune independent matter generation and total artifact generation concurrency:
+
+```bash
+uv run python -m datagen.legal_matter build \
+  --count 25 \
+  --output datasets/legal_matter_chronology_v1 \
+  --matter-concurrency 4 \
+  --artifact-concurrency 12
+```
+
+Build a 10-matter starter dataset across all three domains:
+
+```bash
+uv run python -m datagen.legal_matter build \
+  --count 10 \
+  --domains commercial_lease employment_dispute family_property_settlement \
+  --output datasets/legal_matter_chronology_v1 \
+  --force \
+  --all-concurrent
+```
+
+Run a no-API smoke build with deterministic fixture data:
+
+```bash
+uv run python -m datagen.legal_matter build --mock --count 1 --output /tmp/legal_matter_chronology_v1 --force
+```
+
+Validate an existing generated folder:
+
+```bash
+uv run python -m datagen.legal_matter validate --dataset-dir datasets/legal_matter_chronology_v1
+```
+
+Repair an existing generated folder without regenerating it:
+
+```bash
+uv run python -m datagen.legal_matter repair --dataset-dir datasets/legal_matter_chronology_v1 --max-attempts 3
+```
+
+Create a GDPVal-style table and reference file layout before upload:
+
+```bash
+uv run python -m datagen.legal_matter export-gdpval \
+  --dataset-dir datasets/legal_matter_chronology_v1 \
+  --repo-id <user>/<repo>
+```
+
+Upload a validated folder to a private Hugging Face dataset repo:
+
+```bash
+uv run python -m datagen.legal_matter upload \
+  --dataset-dir datasets/legal_matter_chronology_v1 \
+  --repo-id <user>/<repo> \
+  --private \
+  --export-gdpval
+```
+
+Generated folders include `manifest.json`, `matters.jsonl`, `canonical_events.jsonl`, `contradictions.jsonl`, `gold_states.jsonl`, `artifacts.jsonl`, `questions.jsonl`, `validation_report.json`, and `matters/<matter_id>/artifacts/...`. The GDPVal-style export additionally creates `tasks.jsonl` and `reference_files/<matter_id>/...`.
+
+## Legal Matter Chronology Eval
+
+Run the one-shot legal chronology eval against the Hugging Face dataset:
+
+```bash
+uv run python -m eval.legal_chrono \
+  --repo-id twestoss/legal-matter-chrono-bench \
+  --model openai/gpt-5.4 \
+  --grader-model openai/gpt-5.4 \
+  --max-concurrency 4
+```
+
+Try one prompt without model calls:
+
+```bash
+uv run python -m eval.legal_chrono \
+  --repo-id twestoss/legal-matter-chrono-bench \
+  --limit 1 \
+  --dry-run
+```
+
+The eval writes per-task results to `results/legal_chrono_<model>_<timestamp>.jsonl`, a run summary JSON beside it, and appends aggregate rows to `results/legal_chrono_summary.jsonl`.
 
 ## Current Sample Results
 
